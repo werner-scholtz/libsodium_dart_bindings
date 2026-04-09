@@ -14,9 +14,7 @@ class FileNotExtractedException implements Exception {
   FileNotExtractedException(this.message);
 
   @override
-  String toString() =>
-      'FileNotExtractedException: $message Please try to build in a directory '
-      'with a shorter path.';
+  String toString() => 'FileNotExtractedException: $message';
 }
 
 @internal
@@ -98,7 +96,8 @@ sealed class Extractor {
               throw FileNotExtractedException(
                 'Failed to extract "${entry.name}" to '
                 '"${path.canonicalize(filePath)}". The file path might be too '
-                'long for Windows.',
+                'long for Windows. Please try to build in a directory '
+                'with a shorter path.',
               );
             }
           }

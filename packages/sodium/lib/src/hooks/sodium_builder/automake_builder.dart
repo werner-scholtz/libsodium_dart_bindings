@@ -15,6 +15,9 @@ abstract base class AutomakeBuilder extends SodiumBuilder {
   AutomakeBuilder(super.config, super.logger);
 
   @override
+  bool get allowSpaceInPath => false;
+
+  @override
   @nonVirtual
   @protected
   Future<Uri> buildCached({

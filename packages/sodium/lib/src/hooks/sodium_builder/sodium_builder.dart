@@ -24,6 +24,8 @@ abstract base class SodiumBuilder {
 
   SodiumBuilder(this.config, this.logger);
 
+  bool get allowSpaceInPath;
+
   factory SodiumBuilder.forConfig(CodeConfig config, HookLogger logger) =>
       switch (config.targetOS) {
         .android => AndroidBuilder(config, logger),
@@ -74,6 +76,7 @@ abstract base class SodiumBuilder {
 
       if (tempDir != null) {
         logger.info('Moving installed files to config dir');
+        await Directory.fromUri(configUri).create(recursive: true);
         final newPath = configUri.resolve('install/');
         await Directory.fromUri(installDir).rename(newPath.toFilePath());
         installDir = newPath;
@@ -242,6 +245,13 @@ abstract base class SodiumBuilder {
   ) async {
     logger.info('Extracting source files to config-specific directory...');
     try {
+      if (!allowSpaceInPath && configUri.toFilePath().contains(' ')) {
+        throw FileNotExtractedException(
+          'Build directory contains spaces, which is not allowed. '
+          'Path: ${configUri.toFilePath()}',
+        );
+      }
+
       await Extractor.extractToDisk(sourceArchive, configUri);
       logger.debug('Source files extracted successfully!');
       return null;
@@ -251,8 +261,8 @@ abstract base class SodiumBuilder {
         ..warning('Attempting to extract to a temporary directory instead...');
       final tempDir = await Directory.systemTemp.createTemp('sodium_');
       await Extractor.extractToDisk(sourceArchive, tempDir.uri);
-      logger.debug('Source files extracted successfully!');
-      return tempDir;
+      logger.debug('Source files extracted successfully to ${tempDir.path}!');
+      return Directory.fromUri(tempDir.uri.resolve('libsodium-stable/'));
     }
   }
 

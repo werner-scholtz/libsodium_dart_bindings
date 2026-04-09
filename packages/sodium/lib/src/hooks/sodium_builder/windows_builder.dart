@@ -30,6 +30,9 @@ IF "%__SODIUM_VS_VERSION_MAJOR%"=="15" SET "__SODIUM_VS_NAME=vs2017"
   WindowsBuilder(super.config, super.logger);
 
   @override
+  bool get allowSpaceInPath => true;
+
+  @override
   Future<void> prepare() async {
     _commandPrompt =
         config.cCompiler?.windows.developerCommandPrompt ??
