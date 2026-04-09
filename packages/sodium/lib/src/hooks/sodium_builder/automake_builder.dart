@@ -129,7 +129,7 @@ abstract base class AutomakeBuilder extends SodiumBuilder {
 
     if (windowsBash != null) {
       buildArguments = [
-        '-lc',
+        '-c',
         [
           buildCommand,
           ...buildArguments,
