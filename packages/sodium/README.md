@@ -96,6 +96,13 @@ or some other advanced API, please create an issue.
 ## Installation
 Simply add `sodium` to your `pubspec.yaml` and run `pub get` (or `flutter pub get`).
 
+### Deploying with build hooks
+One important thing to note is that not all dart commands honor build hooks. If you are working with flutter, it will
+automatically work, but if you are developing a pure dart application, you might need to change some commands:
+- `dart <file>.dart` must instead be `dart run <file>.dart`
+- `dart compile` must be replaced with `dart build cli`. Also make sure to include the generated libsodium in your
+deployment artifacts.
+
 ## Usage
 The usage can be split into two parts. The first one is about loading the native libsodium into dart, the second one
 about using the API.
