@@ -331,7 +331,7 @@ changed, only the name of the getter. (#61)
 ### Added
 - Initial stable release
 
-[Unreleased]: https://github.com/Skycoder42/libsodium_dart_bindings/compare/sodium-v4.0.1+2...sodium-vHEAD
+[4.0.2]: https://github.com/Skycoder42/libsodium_dart_bindings/compare/sodium-v4.0.1+2...sodium-v4.0.2
 [4.0.1+2]: https://github.com/Skycoder42/libsodium_dart_bindings/compare/sodium-v4.0.1+1...sodium-v4.0.1+2
 [4.0.1+1]: https://github.com/Skycoder42/libsodium_dart_bindings/compare/sodium-v4.0.1...sodium-v4.0.1+1
 [4.0.1]: https://github.com/Skycoder42/libsodium_dart_bindings/compare/sodium-v4.0.0+1...sodium-v4.0.1
