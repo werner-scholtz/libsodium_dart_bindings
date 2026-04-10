@@ -96,6 +96,13 @@ or some other advanced API, please create an issue.
 ## Installation
 Simply add `sodium` to your `pubspec.yaml` and run `pub get` (or `flutter pub get`).
 
+### Build prerequisites
+Besides adding the dependency, you will need a few basic native build tools. When compiling for the same architecture as
+your development machine, those tools are already available. The only case, where you might have to install them
+manually is when cross compiling for *android* on *windows*. See
+[Cross-Compiling for Android on Windows](#cross-compiling-for-android-on-windows) for more details on how to set up your
+system for that case correctly.
+
 ### Deploying with build hooks
 One important thing to note is that not all dart commands honor build hooks. If you are working with flutter, it will
 automatically work, but if you are developing a pure dart application, you might need to change some commands:
@@ -294,10 +301,17 @@ Cross compiling for android on windows can be somewhat challenging, as libsodium
 not guaranteed to work on windows. However, the package attempts to work around this issue by applying a number of
 tests and tricks to get the build to work. However, I cannot guarantee that it will work on every windows machine.
 
-For now, only one requirement (besides having the Android NDK and SDK correctly set up) is:
+For now, there are two requirements (besides having the Android NDK and SDK correctly set up):
+- [A usable bash installation must be present](#a-usable-bash-installation-must-be-present)
+- [A version of make must be present](#a-version-of-make-must-be-present)
+
+The most lightweight version is to install these tools separately and make sure both are available via PATH. The
+following sections will go into detail on how to obtain each of these tools. Alternatively, you can install the full
+MSYS2/mingw (https://www.msys2.org/) stack, which contains both, bash and make, but is a little more complex and more
+heavyweight.
 
 ### A usable bash installation must be present
-This means ideally Git Bash, allthough other variants may work as well. What is explicitly not supported is a bash
+This means ideally Git Bash, although other variants may work as well. What is explicitly not supported is a bash
 that is part of a WSL installation. If you see an exception like this:
 
 ```
@@ -315,6 +329,16 @@ C:\Program Files\Git\bin
 ```
 
 **Important:** Double check that `\bin` is at the end of the path. Just adding `...\Git` will *not* work.
+
+### A version of make must be present
+Besides having a usable shell, you also need `make`. There are various ways to install make. The easiest ist to use
+either https://scoop.sh/#/ or https://community.chocolatey.org/. After you have installed either of those, you can run:
+
+- Scoop: `scoop install main/make` (See https://scoop.sh/#/apps?q=make&id=c43ff861c0f1713336e5304d85334a29ffb86317)
+- Chocolatey: `choco install make` (See https://community.chocolatey.org/packages/make)
+
+**Important:** Make sure that you set up those tools correctly, as otherwise the make executable might not be added
+to your PATH.
 
 ## Documentation
 The documentation is available at https://pub.dev/documentation/sodium/latest/. A full example can be found at
