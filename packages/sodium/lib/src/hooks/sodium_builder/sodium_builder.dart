@@ -265,7 +265,11 @@ abstract base class SodiumBuilder {
         );
       }
 
-      await Extractor.extractToDisk(sourceArchive, configUri);
+      await Extractor.extractToDisk(
+        sourceArchive,
+        configUri,
+        maxAbsolutePathLength: _maxAbsolutePathLength,
+      );
       logger.debug('Source files extracted successfully!');
       return null;
     } on FileNotExtractedException catch (e) {
@@ -273,11 +277,29 @@ abstract base class SodiumBuilder {
         ..warning(e.message)
         ..warning('Attempting to extract to a temporary directory instead...');
       final tempDir = await Directory.systemTemp.createTemp('sodium_');
-      await Extractor.extractToDisk(sourceArchive, tempDir.uri);
+      await Extractor.extractToDisk(
+        sourceArchive,
+        tempDir.uri,
+        maxAbsolutePathLength: _maxAbsolutePathLength,
+      );
       logger.debug('Source files extracted successfully to ${tempDir.path}!');
       return Directory.fromUri(tempDir.uri.resolve('libsodium-stable/'));
     }
   }
+
+  /// Max absolute path length for an extracted source file on a Windows host.
+  ///
+  /// `cl.exe` (invoked by msbuild) still uses ANSI Win32 APIs and remains
+  /// bound to `MAX_PATH` (260), even with `LongPathsEnabled`. It receives
+  /// sources via relative paths like `..\..\..\..\src\libsodium\...\<file>.c`
+  /// from `builds\msvc\vsXXXX\libsodium\`, which adds 41 chars of overhead.
+  /// Capping the extracted absolute path at 218 keeps cl.exe under the limit.
+  ///
+  /// see https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
+  static const _windowsMaxSourcePathLength = 218;
+
+  int? get _maxAbsolutePathLength =>
+      Platform.isWindows ? _windowsMaxSourcePathLength : null;
 
   void _logExec(
     String operation,

@@ -42,9 +42,10 @@ sealed class Extractor {
 
   static Future<void> extractToDisk(
     Uri archiveUri,
-    Uri outDirUri, [
+    Uri outDirUri, {
     void Function(String)? logFileExtracted,
-  ]) async {
+    int? maxAbsolutePathLength,
+  }) async {
     final outDir = Directory.fromUri(outDirUri);
     if (!outDir.existsSync()) {
       await outDir.create(recursive: true);
@@ -69,6 +70,17 @@ sealed class Extractor {
 
       for (final entry in archive) {
         final filePath = path.normalize(path.join(outDir.path, entry.name));
+
+        if (maxAbsolutePathLength != null &&
+            path.absolute(filePath).length > maxAbsolutePathLength) {
+          throw FileNotExtractedException(
+            'Cannot extract "${entry.name}" to '
+            '"${path.absolute(filePath)}": resulting absolute path length '
+            '(${path.absolute(filePath).length}) exceeds the configured '
+            'maximum of $maxAbsolutePathLength characters. Please try to '
+            'build in a directory with a shorter path.',
+          );
+        }
 
         if (!_isWithinOutputPath(outDir.path, filePath)) {
           throw Exception(
