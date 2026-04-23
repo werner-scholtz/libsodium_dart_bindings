@@ -78,8 +78,21 @@ abstract base class SodiumBuilder {
         logger.info('Moving installed files to config dir');
         await Directory.fromUri(configUri).create(recursive: true);
         final newPath = configUri.resolve('install/');
-        await Directory.fromUri(installDir).rename(newPath.toFilePath());
-        installDir = newPath;
+        if (FileSystemEntity.isFileSync(installDir.toFilePath())) {
+          // Windows returns the built DLL path directly rather than an
+          // install tree, so copy the single artifact into `install/`.
+          final destDir = Directory.fromUri(newPath);
+          await destDir.create(recursive: true);
+          final fileName = installDir.pathSegments.lastWhere(
+            (s) => s.isNotEmpty,
+          );
+          final destFile = File.fromUri(destDir.uri.resolve(fileName));
+          await File.fromUri(installDir).rename(destFile.path);
+          installDir = destFile.uri;
+        } else {
+          await Directory.fromUri(installDir).rename(newPath.toFilePath());
+          installDir = newPath;
+        }
       }
 
       if (exportHeadersTo != null) {
